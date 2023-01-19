@@ -4,8 +4,6 @@ export const themecolor = {
 }
 
 export const themeFont = {
-    font12: 12,
-    font13: 13,
     font18: 18,
 }
 
@@ -18,3 +16,5 @@ export const darkThemeColor = {
     primary: themecolor.black,
     secondary: themecolor.white,
 }
+
+export const API_KEY = 'GzEL8B3VWdRmsOBElFP352Kyalc5ShNq';

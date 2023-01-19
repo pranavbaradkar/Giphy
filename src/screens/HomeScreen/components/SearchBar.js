@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { themecolor } from '../../../constant';
 import ThemeContext from '../../../context/ThemeContext';
 
@@ -13,17 +13,20 @@ const styles = StyleSheet.create({
         marginLeft: 16,
         paddingHorizontal: 16,
         marginTop: 24,
-        width: '170%',
+        width: 200,
     }
 });
 
-const SearchBar = () => {
+const SearchBar = ({handleSearch, searchValue}) => {
     const {themeColorScheme} = useContext(ThemeContext); 
     return(
         <View>
-            <TextInput style={[styles.outerContainer, {borderColor: themeColorScheme.secondary}]} placeholder='Search gif' placeholderTextColor={themeColorScheme.secondary} value='' onChangeText={(k) => {
-                console.log(k);
-            } }></TextInput>
+            <TextInput 
+            style={[styles.outerContainer, {borderColor: themeColorScheme.secondary, color: themeColorScheme.secondary}]} 
+            placeholder='Search gif' 
+            placeholderTextColor={themeColorScheme.secondary} 
+            value={searchValue}
+            onChangeText={handleSearch}/>
         </View>
     );
 }
