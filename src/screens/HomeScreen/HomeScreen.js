@@ -42,7 +42,7 @@ const HomeScreen = () => {
     const [searchValue, setSearchValue] = useState('');
     const [filterData, setFilterData] = useState([]);
 
-    useEffect(() => {
+    const fetchTrendingGifs = () => {
         getTrendingGifs({
             api_key: API_KEY,
             limit: 25
@@ -55,7 +55,7 @@ const HomeScreen = () => {
         .catch((e) => {
             console.log(e);
         });
-    }, []);
+    }
 
     const fetchSearchGifs = (query) => {
         getSearchGifs({
@@ -74,19 +74,24 @@ const HomeScreen = () => {
         });
     }
 
+    const handleSearch = (query) => {
+        setSearchValue(query);
+    }
+
+    const showTrendingData = searchValue.length === 0;
+
     useEffect(() => {
+        fetchTrendingGifs();
+    }, []);
+
+    useEffect(() => {
+        //debouncing
         const totalTimeOut = setTimeout(() => {
             fetchSearchGifs(searchValue);
         }, 1000);
 
         return () => clearTimeout(totalTimeOut);
     }, [searchValue]);
-
-    const handleSearch = (query) => {
-        setSearchValue(query);
-    }
-
-    const showTrendingData = searchValue.length === 0;
 
     return(
         <ThemeContext.Provider value={{themeColorScheme, isDark, handleTheme}}>
