@@ -41,33 +41,56 @@ const HomeScreen = () => {
     const [trendingData, setTrendingData] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [filterData, setFilterData] = useState([]);
+    const [loadCount, setLoadCount] = useState(0);
+    const [filterLoadCount, setFilterLoadCount] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const gif_render_limit = 10;
 
     const fetchTrendingGifs = () => {
+        setIsLoading(true);
         getTrendingGifs({
             api_key: API_KEY,
-            limit: 25
+            limit: gif_render_limit,
+            offset: loadCount * gif_render_limit,
         })
         .then(
             (res) => {
-                const data  = res.data;
-                setTrendingData(data.data);
-        }) 
+                const data  = res.data.data;
+                const newUpdatedData = [...trendingData,...data];
+
+                setTrendingData(newUpdatedData);
+        })
+        .finally(() => {
+            setIsLoading(false);
+        })
         .catch((e) => {
             console.log(e);
         });
     }
 
-    const fetchSearchGifs = (query) => {
+    const fetchSearchGifs = (isLoadCountChange = false) => {
+        setIsLoading(true);
         getSearchGifs({
             api_key: API_KEY,
-            q: query,
-            limit: 10,
+            q: searchValue,
+            limit: gif_render_limit,
+            offset: gif_render_limit * filterLoadCount,
         })
         .then((res) => {
-            const data = res.data;
-            setFilterData(data.data);
+            const data = res.data.data;
+            const newUpdatedData = isLoadCountChange ? [...filterData,...data] : data;
+
+            setFilterData(newUpdatedData);
+
+            //to check calling API due to count change
+            console.log(filterLoadCount);
+
             //to check if we are calling api repeatedly or not
             console.log('=====>');
+        })
+        .finally(() => {
+            setIsLoading(false);
         })
         .catch((e) => {
             console.log(e);
@@ -78,16 +101,30 @@ const HomeScreen = () => {
         setSearchValue(query);
     }
 
+    const handleOnReachEndTrending = () => {
+        setLoadCount((count) => count + 1);
+    }
+
+    const handleOnReachEndFilter = () => {
+        setFilterLoadCount((count) => count + 1);
+    }
+
     const showTrendingData = searchValue.length === 0;
 
     useEffect(() => {
         fetchTrendingGifs();
-    }, []);
+    }, [loadCount]);
+
+    useEffect(() => {
+        fetchSearchGifs(true)
+    }, [filterLoadCount]);
 
     useEffect(() => {
         //debouncing
         const totalTimeOut = setTimeout(() => {
-            fetchSearchGifs(searchValue);
+            fetchSearchGifs();
+            // to make load count of infinite scroll to zero for every new search
+            setFilterLoadCount(0);
         }, 1000);
 
         return () => clearTimeout(totalTimeOut);
@@ -107,7 +144,7 @@ const HomeScreen = () => {
             <Text style={[styles.heading, {color: themeColorScheme.secondary}]}>
                 {showTrendingData ? 'Trending Gifs' : 'Searched Gifs'}
             </Text>
-            {showTrendingData ? <Grid gifData={trendingData}/> : <Grid gifData={filterData}/>}
+            {showTrendingData ? <Grid gifData={trendingData} onReachEnd={handleOnReachEndTrending} isLoading={isLoading}/> : <Grid gifData={filterData} onReachEnd={handleOnReachEndFilter} isLoading={isLoading}/>}
         </SafeAreaView>
         </ThemeContext.Provider>
     );

@@ -1,20 +1,26 @@
 import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { FlatList, ScrollView, StyleSheet } from "react-native";
 import DisplayGif from "./DisplayGif";
+import Loader from "./Loader";
 
 const styles = StyleSheet.create({
     scrollViewContainer: {
-        flexDirection: 'row', 
-        flexWrap: 'wrap', 
-        justifyContent: 'space-between',
+        alignItems: 'center',
         paddingHorizontal: 16},
 });
 
-const Grid = ({gifData}) => {
+const Grid = ({gifData, onReachEnd = () => {}, isLoading = false}) => {
     return(
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                {gifData.map((item) =>  <DisplayGif key={item.id} item={item}/>)}
-        </ScrollView>
+        <FlatList 
+        ListFooterComponent={isLoading ? <Loader/> : null}
+        initialNumToRender={1}
+        onEndReached={onReachEnd}
+        contentContainerStyle={styles.scrollViewContainer}
+        data={gifData}
+        renderItem={({item, index}) => <DisplayGif item={item}></DisplayGif>}
+        keyExtractor={(item,index) => `${item.id}${index}`}
+        numColumns={3}
+        />
     );
 }
 
