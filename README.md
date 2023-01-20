@@ -7,6 +7,9 @@
 4. Pause and play gif
 5. Theme change
 
+#tested on
+1. IOS using Expo
+
 #screenshots
 
 ![IMG_2417](https://user-images.githubusercontent.com/40644611/213679507-bccd126d-741d-4a81-94df-827b4baa9869.PNG)
