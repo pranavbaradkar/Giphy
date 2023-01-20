@@ -14,6 +14,7 @@ const Grid = ({gifData, onReachEnd = () => {}, isLoading = false}) => {
         <FlatList 
         ListFooterComponent={isLoading ? <Loader/> : null}
         initialNumToRender={1}
+        maxToRenderPerBatch={10}
         onEndReached={onReachEnd}
         contentContainerStyle={styles.scrollViewContainer}
         data={gifData}
